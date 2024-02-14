@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nginx-blue-green
-        image: mubinskh/nginx-blue-green
+        image: reanconnect/nginx-blue-green
         ports:
         - containerPort: 80
 ---
