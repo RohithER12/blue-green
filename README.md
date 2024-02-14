@@ -1,17 +1,21 @@
+# Blue-Green Deployment using ArgoCD on Minikube with Nginx
 
-Blue-Green Deployment using ArgoCD on Minikube with Nginx
 This guide will walk you through setting up a blue-green deployment using ArgoCD on a local Minikube cluster. We will be using Nginx as the web server to serve two different web pages: one for the blue version and one for the green version.
 
-Prerequisites
-Docker installed on your local machine
-Minikube installed and running
-kubectl installed and configured to interact with your Minikube cluster
-ArgoCD installed and accessible
-Step 1: Clone the Repository
+## Prerequisites
+
+Before you begin, ensure you have the following installed and configured:
+
+- Docker on your local machine
+- Minikube installed and running
+- kubectl installed and configured to interact with your Minikube cluster
+- ArgoCD installed and accessible
+
+## Step 1: Clone the Repository
+
 Clone the repository containing the Nginx configurations and HTML files:
 
-bash
-Copy code
+```bash
 git clone https://github.com/RohithER12/blue-green.git
 cd blue-green
 Step 2: Build the Docker Image
@@ -58,34 +62,27 @@ Apply the ArgoCD application manifest:
 bash
 Copy code
 kubectl apply -f kubernetes/application.yaml
-## Step 5: Access the Application
-
+Step 5: Access the Application
 Retrieve the URL of the service using Minikube:
 
-```bash
+bash
+Copy code
 minikube service blue-green-service --url
-```
-
 You'll get an output like:
 
-```
+arduino
+Copy code
 http://192.168.58.2:30543
-```
-
 Now you can access the blue-green deployment at the provided URL.
 
-### Accessing Blue and Green Versions
-
+Accessing Blue and Green Versions
 Navigate to the following URLs to access the blue and green versions respectively:
 
-- Blue Version: [http://192.168.58.2:30543/blue](http://192.168.58.2:30543/blue)
-  
-  ![Blue Version](blue_page.png)
+Blue Version: http://192.168.58.2:30543/blue
 
-- Green Version: [http://192.168.58.2:30543/green](http://192.168.58.2:30543/green)
-  
-  ![Green Version](green_page.png)
 
-## Conclusion
+Green Version: http://192.168.58.2:30543/green
 
+
+Conclusion
 You have successfully set up a blue-green deployment using ArgoCD on your local Minikube cluster with Nginx serving different versions of the web pages. You can now easily switch between the blue and green versions of your application.
