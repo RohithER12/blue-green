@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blue-green
+spec:
+  destination:
+    server: https://kubernetes.default.svc # Replace with your Kubernetes API server
+    namespace: default
+  project: default # Replace with your project name in ArgoCD
+  source:
+    repoURL: https://github.com/RohithER12/blue-green.git # Git repository URL
+    path: kubernetes # Replace with the path to your application manifests within the repo
+    targetRevision: HEAD # Replace with the desired Git revision (e.g., branch, tag, commit hash)
+  syncPolicy:
+    automated:
+      prune: true # Enable or disable pruning of resources not in the Git repository
+      selfHeal: true # Enable or disable auto-reconciliation to ensure desired state
+      allowEmpty: false # Allows deleting all application resources during automatic syncing ( false by default ).
+    syncOptions:
+      - Validate=false # Additional sync options if needed
