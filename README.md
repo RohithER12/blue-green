@@ -1,82 +1,60 @@
+
 # Blue-Green Deployment using ArgoCD on Minikube with Nginx
 
 This document provides instructions for setting up a blue-green deployment using ArgoCD on a local Minikube cluster. The deployment serves two versions of a web page using Nginx.
 
-###Prerequisites
+
+
+## Prerequisites
+
 Ensure the following prerequisites are met:
 
-Docker is installed on your local machine.
-Minikube is installed and operational.
-kubectl is installed and configured to communicate with the Minikube cluster.
-ArgoCD is installed and accessible.
-##Step 1: Clone Repository
+- Docker is installed on your local machine.
+- Minikube is installed and operational.
+- kubectl is installed and configured to communicate with the Minikube cluster.
+- ArgoCD is installed and accessible.
+
+## Step 1: Clone Repository
+
 Clone the repository containing Nginx configurations and HTML files:
 
-bash
-Copy code
-git clone https://github.com/RohithER12/blue-green.git
-cd blue-green
-##Step 2: Build Docker Image
-Build the Docker image containing Nginx and HTML files:
+```bash
+  git clone https://github.com/RohithER12/blue-green.git
+  cd blue-green
+```
+## Step 2: Deploy Nginx
+Deploy Nginx to the Minikube cluster using the following command:
 
-bash
-Copy code
-docker build -t nginx-blue-green .
-##Step 3: Deploy to Minikube
-Apply Kubernetes manifests to deploy Nginx, create necessary services, and configure ingress:
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f application.yaml
+kubectl apply -f ingress.yaml
+```
+Ensure the Nginx pods are running by executing:
 
-bash
-Copy code
-kubectl apply -f kubernetes/deployment.yaml
-kubectl apply -f kubernetes/service.yaml
-kubectl apply -f kubernetes/ingress.yaml
-##Step 4: Configure ArgoCD Application
-Ensure ArgoCD is operational. Create an application for blue-green deployment:
+```bash
+kubectl get pods
+```
+## Step 3: Configure ArgoCD
+Ensure ArgoCD is configured to monitor the repository by following the official documentation or guides specific to your environment.
 
-yaml
-Copy code
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: blue-green
-spec:
-  destination:
-    server: https://kubernetes.default.svc # Replace with your Kubernetes API server
-    namespace: default
-  project: default # Replace with your project name in ArgoCD
-  source:
-    repoURL: https://github.com/RohithER12/blue-green.git # Git repository URL
-    path: kubernetes # Replace with the path to your application manifests within the repo
-    targetRevision: HEAD # Replace with desired Git revision (e.g., branch, tag, commit hash)
-  syncPolicy:
-    automated:
-      prune: true # Enable or disable pruning of resources not in Git repository
-      selfHeal: true # Enable or disable auto-reconciliation to ensure desired state
-      allowEmpty: false # Allow deleting all application resources during automatic syncing (false by default)
-    syncOptions:
-      - Validate=false # Additional sync options if needed
-Apply the ArgoCD application manifest:
 
-bash
-Copy code
-kubectl apply -f kubernetes/application.yaml
-##Step 5: Access the Application
-Retrieve the service URL using Minikube:
+## Step 4: Create Blue-Green Application
+Create a new application in ArgoCD for the blue-green deployment by pointing it to the cloned repository and selecting the appropriate YAML files.
 
-bash
-Copy code
-minikube service blue-green-service --url
-You'll receive an output like:
+## Step 5: Verify Deployment
+Verify that the blue and green versions of the web page are accessible through the respective service endpoints.
 
-arduino
-Copy code
-http://192.168.58.2:30543
-Access the blue-green deployment at the provided URL.
+```bash
+minikube service blue-green-blue
+minikube service blue-green-green
+```
+ ##   Step 6: Promote Green to Blue
+Once the green version is verified and ready for production, promote it to the blue environment using ArgoCD.
 
-Accessing Blue and Green Versions
-Navigate to the following URLs to access the blue and green versions respectively:
+## Step 7: Rollback (if necessary)
+In case of issues with the green version, rollback to the blue version using ArgoCD.
 
-Blue Version: http://192.168.58.2:30543/blue
-Green Version: http://192.168.58.2:30543/green
-Conclusion
-You've successfully established a blue-green deployment using ArgoCD on your local Minikube cluster, with Nginx serving different versions of web pages. Switch between blue and green versions of your application seamlessly.
+## Conclusion
+You have successfully set up a blue-green deployment using ArgoCD on Minikube with Nginx. This deployment strategy allows for seamless updates and minimal downtime during deployments.
+
